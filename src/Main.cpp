@@ -21,22 +21,33 @@ void Run(Generation& Generation)
 	} while (true);
 }
 
-void Benchmark(Generation& Generation)
+void Benchmark()
 {
-	const std::chrono::milliseconds Start = GetTime();
+	long long Sum = 0;
 
-	for (int Index = 0; Index < 10000; Index++) {
-		Generation.Evolve();
+	const int BenchmarkIterationCount = 10;
+	const int GenerationEvolutionCount = 10000;
+	const int SpaceSize = 32;
+
+	for (int Bench = 0; Bench < BenchmarkIterationCount; Bench++) {
+		Generation Generation(*GliderGun::CreateState(), Space(SpaceSize, SpaceSize));
+
+		const std::chrono::milliseconds Start = GetTime();
+		for (int Index = 0; Index < GenerationEvolutionCount; Index++) {
+			Generation.Evolve();
+		}
+
+		const std::chrono::milliseconds TotalTime = GetTime() - Start;
+		std::cout << "Completed " << GenerationEvolutionCount << " iterations in " << TotalTime.count() << " milliseconds." << std::endl;
+
+		Sum += TotalTime.count();
 	}
-	const std::chrono::milliseconds TotalTime = GetTime() - Start;
 
-	std::cout << "Completed 1000 iterations in " << TotalTime.count() << " milliseconds.";
+
+	std::cout << "Completed " << BenchmarkIterationCount << " * " << GenerationEvolutionCount << " iterations in an average time of " << Sum / BenchmarkIterationCount << " milliseconds." << std::endl;
 }
 
 int main()
 {
-	const Space InitialSpace(45, 45);
-	Generation InitialGeneration(*GliderGun::CreateState(), InitialSpace);
-
-	Benchmark(InitialGeneration);
+	Benchmark();
 }

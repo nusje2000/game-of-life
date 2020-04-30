@@ -21,5 +21,5 @@ private:
 	Space Space;
 	int GenerationId;
 
-	bool IsAliveCellInNextGeneration(const int X, const int Y) const;
+	bool IsAliveCellInNextGeneration(const unsigned int Index) const;
 };

@@ -43,7 +43,6 @@ void Benchmark()
 		Sum += TotalTime.count();
 	}
 
-
 	std::cout << "Completed " << BenchmarkIterationCount << " * " << GenerationEvolutionCount << " iterations in an average time of " << Sum / BenchmarkIterationCount << " milliseconds." << std::endl;
 }
 

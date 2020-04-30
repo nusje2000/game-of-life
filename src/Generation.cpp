@@ -27,11 +27,23 @@ void Generation::Evolve()
 {
 	State NewState;
 
-	for (int HeightIndex = 0; HeightIndex < Space.GetHeight(); HeightIndex++) {
-		for (int WidthIndex = 0; WidthIndex < Space.GetWidth(); WidthIndex++) {
-			if (IsAliveCellInNextGeneration(WidthIndex, HeightIndex)) {
-				NewState.SetAliveCell(WidthIndex, HeightIndex);
+	std::vector<unsigned int> CheckCells;
+
+	const std::vector<unsigned int> CurrentCells = CurrentState.GetCells();
+	for (int Index = 0; Index < CurrentCells.size(); Index++) {
+		std::unique_ptr<std::vector<unsigned int>> NewCheckCells = CurrentState.GetNeighboursIndexesByPosition(CurrentCells[Index]);
+		NewCheckCells->emplace_back(CurrentCells[Index]);
+
+		for (int NewCellIndex = 0; NewCellIndex < NewCheckCells->size(); NewCellIndex++) {
+			if (std::find(CheckCells.begin(), CheckCells.end(), NewCheckCells->at(NewCellIndex)) == CheckCells.end()) {
+				CheckCells.emplace_back(NewCheckCells->at(NewCellIndex));
 			}
+		}
+	}
+
+	for (int Index = 0; Index < CheckCells.size(); Index++) {
+		if (IsAliveCellInNextGeneration(CheckCells.at(Index))) {
+			NewState.SetAliveCell(CheckCells.at(Index));
 		}
 	}
 
@@ -40,9 +52,13 @@ void Generation::Evolve()
 	GenerationId++;
 }
 
-bool Generation::IsAliveCellInNextGeneration(const int X, const int Y) const
+bool Generation::IsAliveCellInNextGeneration(const unsigned int Index) const
 {
-	const int Neighbours = CurrentState.GetNeighboursCountByPosition(X, Y);
+	if (CurrentState.GetXFromIndex(Index) > Space.GetWidth() || CurrentState.GetYFromIndex(Index) > Space.GetHeight()) {
+		return false;
+	}
 
-	return CurrentState.PositionIsAliveCell(X, Y) ? Neighbours == 2 || Neighbours == 3 : Neighbours == 3;
+	const int Neighbours = CurrentState.GetNeighboursCountByPosition(Index);
+
+	return CurrentState.PositionIsAliveCell(Index) ? Neighbours == 2 || Neighbours == 3 : Neighbours == 3;
 }

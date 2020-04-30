@@ -5,6 +5,7 @@
 
 Generation::Generation(const class State State, const class Space Space): CurrentState(State), Space(Space), GenerationId(1)
 {
+	CurrentState.Sort();
 }
 
 const State& Generation::GetState() const
@@ -24,31 +25,24 @@ int Generation::GetGenerationId() const
 
 void Generation::Evolve()
 {
-	std::vector<Cell> NewCells;
+	State NewState;
 
 	for (int HeightIndex = 0; HeightIndex < Space.GetHeight(); HeightIndex++) {
 		for (int WidthIndex = 0; WidthIndex < Space.GetWidth(); WidthIndex++) {
 			if (IsAliveCellInNextGeneration(WidthIndex, HeightIndex)) {
-				NewCells.emplace_back(WidthIndex, HeightIndex);
+				NewState.SetAliveCell(WidthIndex, HeightIndex);
 			}
 		}
 	}
 
-	CurrentState = State(std::make_shared<std::vector<Cell>>(NewCells));
+	NewState.Sort();
+	CurrentState = NewState;
 	GenerationId++;
 }
 
 bool Generation::IsAliveCellInNextGeneration(const int X, const int Y) const
 {
-	const int Neighbours = CurrentState.GetNeighboursByPosition(X, Y)->size();
+	const int Neighbours = CurrentState.GetNeighboursCountByPosition(X, Y);
 
-	if (CurrentState.PositionIsAliveCell(X, Y) && Neighbours == 2 || Neighbours == 3) {
-		return true;
-	}
-
-	if (!CurrentState.PositionIsAliveCell(X, Y) && Neighbours == 3) {
-		return true;
-	}
-
-	return false;
+	return CurrentState.PositionIsAliveCell(X, Y) ? Neighbours == 2 || Neighbours == 3 : Neighbours == 3;
 }

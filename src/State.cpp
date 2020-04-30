@@ -1,35 +1,38 @@
 ﻿#include "State.h"
 
-State::State(const std::shared_ptr<std::vector<Cell>> Cells): Cells(Cells)
+#include <algorithm>
+
+int State::GetNeighboursCountByPosition(const unsigned short X, const unsigned short Y) const
 {
+	return
+		PositionIsAliveCell(X - 1, Y - 1) +
+		PositionIsAliveCell(X, Y - 1) + 
+		PositionIsAliveCell(X + 1, Y - 1) + 
+		PositionIsAliveCell(X - 1, Y) +
+		PositionIsAliveCell(X + 1, Y) +
+		PositionIsAliveCell(X - 1, Y + 1) +
+		PositionIsAliveCell(X, Y + 1) +
+		PositionIsAliveCell(X + 1, Y + 1);
 }
 
-std::shared_ptr<std::vector<Cell>> State::GetNeighboursByPosition(const int X, const int Y) const
+bool State::PositionIsAliveCell(const unsigned short X, const unsigned short Y) const
 {
-	std::vector<Cell> Neighbours;
-	for (int Index = 0; Index < Cells->size(); Index++) {
-		const Cell& CurrentCell = Cells->at(Index);
-		if (CurrentCell.GetX() == X && CurrentCell.GetY() == Y) {
-			continue;
-		}
+	const int Index = CreateIndex(X, Y);
 
-		if (CurrentCell.GetX() >= X - 1 && CurrentCell.GetX() <= X + 1 && CurrentCell.GetY() >= Y - 1 && CurrentCell.GetY() <= Y + 1) {
-			Neighbours.emplace_back(CurrentCell);
-		}
-	}
-
-	return std::make_shared<std::vector<Cell>>(Neighbours);
+	return std::binary_search(Cells.begin(), Cells.end(), Index);
 }
 
-bool State::PositionIsAliveCell(const int X, const int Y) const
+void State::SetAliveCell(const unsigned short X, const unsigned short Y)
 {
-	for (int Index = 0; Index < Cells->size(); Index++) {
-		const Cell& CurrentCell = Cells->at(Index);
+	Cells.emplace_back(CreateIndex(X, Y));
+}
 
-		if (CurrentCell.GetX() == X && CurrentCell.GetY() == Y) {
-			return true;
-		}
-	}
+void State::Sort()
+{
+	std::sort(Cells.begin(), Cells.end());
+}
 
-	return false;
+int State::CreateIndex(const unsigned short X, const unsigned short Y) const
+{
+	return (int(X) << 16) + Y;
 }

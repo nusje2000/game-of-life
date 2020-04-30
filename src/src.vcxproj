@@ -147,7 +147,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Generation.cpp" />
     <ClCompile Include="InitialState\GliderGun.cpp" />
     <ClCompile Include="InitialState\Random.cpp" />
@@ -157,7 +156,6 @@
     <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cell.h" />
     <ClInclude Include="Generation.h" />
     <ClInclude Include="InitialState\GliderGun.h" />
     <ClInclude Include="InitialState\Random.h" />

@@ -1,18 +1,21 @@
 ﻿#pragma once
 
-#include <memory>
+#include <map>
 #include <vector>
-#include "Cell.h"
 
 class State
 {
 public:
-	State(std::shared_ptr<std::vector<Cell>> Cells);
-	
-	std::shared_ptr<std::vector<Cell>> GetNeighboursByPosition(const int X, const int Y) const;
+	int GetNeighboursCountByPosition(const unsigned short X, const unsigned short Y) const;
 
-	bool PositionIsAliveCell(const int X, const int Y) const;
+	bool PositionIsAliveCell(const unsigned short X, const unsigned short Y) const;
+
+	void SetAliveCell(const unsigned short X, const unsigned short Y);
+
+	void Sort();
 	
 private:
-	std::shared_ptr<std::vector<Cell>> Cells;
+	std::vector<unsigned int> Cells;
+
+	int CreateIndex(const unsigned short X, const unsigned short Y) const;
 };

@@ -1,5 +1,8 @@
 ﻿#include "Generation.h"
 
+#include <set>
+
+
 #include "Space.h"
 #include "State.h"
 
@@ -27,24 +30,24 @@ void Generation::Evolve()
 {
 	State NewState;
 
-	std::vector<unsigned int> CheckCells;
+	std::set<unsigned int> CheckCells;
 
 	const std::vector<unsigned int> CurrentCells = CurrentState.GetCells();
 	for (int Index = 0; Index < CurrentCells.size(); Index++) {
 		std::unique_ptr<std::vector<unsigned int>> NewCheckCells = CurrentState.GetNeighboursIndexesByPosition(CurrentCells[Index]);
-		NewCheckCells->emplace_back(CurrentCells[Index]);
 
+		CheckCells.insert(CurrentCells[Index]);
 		for (int NewCellIndex = 0; NewCellIndex < NewCheckCells->size(); NewCellIndex++) {
-			if (std::find(CheckCells.begin(), CheckCells.end(), NewCheckCells->at(NewCellIndex)) == CheckCells.end()) {
-				CheckCells.emplace_back(NewCheckCells->at(NewCellIndex));
-			}
+			CheckCells.insert(NewCheckCells->at(NewCellIndex));
 		}
 	}
 
-	for (int Index = 0; Index < CheckCells.size(); Index++) {
-		if (IsAliveCellInNextGeneration(CheckCells.at(Index))) {
-			NewState.SetAliveCell(CheckCells.at(Index));
+	auto Iterator = CheckCells.begin();
+	while (Iterator != CheckCells.end()) {
+		if (IsAliveCellInNextGeneration(*Iterator)) {
+			NewState.SetAliveCell(*Iterator);
 		}
+		++Iterator;
 	}
 
 	NewState.Sort();

@@ -13,21 +13,22 @@ std::chrono::milliseconds GetTime()
 	);
 }
 
-void Run(Generation& Generation)
+void Run()
 {
+	Generation Generation(*GliderGun::CreateState(), Space(48, 48));
+
 	do {
 		Renderer::Render(Generation);
 		Generation.Evolve();
 	} while (true);
 }
 
-void Benchmark()
+void Benchmark(const int SpaceSize)
 {
 	long long Sum = 0;
 
 	const int BenchmarkIterationCount = 10;
 	const int GenerationEvolutionCount = 10000;
-	const int SpaceSize = 32;
 
 	for (int Bench = 0; Bench < BenchmarkIterationCount; Bench++) {
 		Generation Generation(*GliderGun::CreateState(), Space(SpaceSize, SpaceSize));
@@ -43,10 +44,20 @@ void Benchmark()
 		Sum += TotalTime.count();
 	}
 
-	std::cout << "Completed " << BenchmarkIterationCount << " * " << GenerationEvolutionCount << " iterations in an average time of " << Sum / BenchmarkIterationCount << " milliseconds." << std::endl;
+	std::cout << "Completed " << BenchmarkIterationCount << " * " << GenerationEvolutionCount << " iterations in an average time of " << Sum / BenchmarkIterationCount << " milliseconds (" << SpaceSize
+		<< "x" << SpaceSize << ")." << std::endl;
 }
 
 int main()
 {
-	Benchmark();
+	//Run();
+	std::cout << "===================================================================" << std::endl;
+	Benchmark(32);
+	std::cout << "===================================================================" << std::endl;
+	Benchmark(64);
+	std::cout << "===================================================================" << std::endl;
+	Benchmark(128);
+	std::cout << "===================================================================" << std::endl;
+	Benchmark(256);
+	std::cout << "===================================================================" << std::endl;
 }

@@ -1,8 +1,5 @@
 ﻿#include "Generation.h"
-
 #include <set>
-
-
 #include "Space.h"
 #include "State.h"
 

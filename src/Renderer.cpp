@@ -1,24 +1,35 @@
 ﻿#include "Renderer.h"
 
 #include <iostream>
+#include <map>
+#include <windows.h>
+
+Renderer::Renderer(): Console(GetConsoleWindow()), Context(GetDC(Console))
+{
+	HideCaret(Console);
+}
 
 void Renderer::Render(const Generation& Generation)
 {
-	std::cout << "\033\143";
+	const auto AliveCellColor = RGB(255, 0, 0);
+	const auto DeadCellColor = RGB(0, 0, 0);
 
-
-	for (int HeightIndex = 0; HeightIndex < Generation.GetSpace().GetHeight(); HeightIndex++) {
-		for (int WidthIndex = 0; WidthIndex < Generation.GetSpace().GetWidth(); WidthIndex++) {
-			if (Generation.GetState().PositionIsAliveCell(WidthIndex, HeightIndex)) {
-				std::cout << "[]";
-			} else {
-				std::cout << "  ";
-			}
-		}
-
-		std::cout << std::endl;
+	std::map<unsigned int, bool> Pixels;
+	
+	for (const unsigned int Index : PreviousState.GetCells()) {
+		Pixels.emplace(Index, false);
 	}
 
-	std::cout << "Generation: " << Generation.GetGenerationId() << std::endl;
-	std::cout.flush();
+	const State State = Generation.GetState();
+	for (const unsigned int Index : State.GetCells()) {
+		Pixels.emplace(Index, true);
+	}
+
+	auto Iterator = Pixels.begin();
+	while (Iterator != Pixels.end()) {
+		SetPixel(Context, State.GetXFromIndex(Iterator->first), State.GetYFromIndex(Iterator->first), Iterator->second ? AliveCellColor : DeadCellColor);
+		++Iterator;
+	}
+
+	PreviousState = State;
 }

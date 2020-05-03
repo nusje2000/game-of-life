@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Generation.h"
 #include "InitialState/GliderGun.h"
+#include "InitialState/Random.h"
 #include "Renderer.h"
 #include "Space.h"
 
@@ -15,10 +16,11 @@ std::chrono::milliseconds GetTime()
 
 void Run()
 {
-	Generation Generation(*GliderGun::CreateState(), Space(48, 48));
+	Generation Generation(*Random::CreateState(Space(256, 256), 50), Space(1000, 1000));
+	Renderer Renderer;
 
 	do {
-		Renderer::Render(Generation);
+		Renderer.Render(Generation);
 		Generation.Evolve();
 	} while (true);
 }
@@ -50,14 +52,15 @@ void Benchmark(const int SpaceSize)
 
 int main()
 {
-	//Run();
-	std::cout << "===================================================================" << std::endl;
-	Benchmark(32);
-	std::cout << "===================================================================" << std::endl;
-	Benchmark(64);
-	std::cout << "===================================================================" << std::endl;
-	Benchmark(128);
-	std::cout << "===================================================================" << std::endl;
-	Benchmark(256);
-	std::cout << "===================================================================" << std::endl;
+	Run();
+	// std::cout << "===================================================================" << std::endl;
+	// Benchmark(32);
+	// std::cout << "===================================================================" << std::endl;
+	// Benchmark(64);
+	// std::cout << "===================================================================" << std::endl;
+	// Benchmark(128);
+	// std::cout << "===================================================================" << std::endl;
+	// Benchmark(256);
+	// std::cout << "===================================================================" << std::endl;
+	//
 }

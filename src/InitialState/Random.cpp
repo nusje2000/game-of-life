@@ -6,7 +6,7 @@ std::unique_ptr<State> Random::CreateState(const Space Space, const int AlivePro
 {
 	State InitialState;
 
-	srand(time(nullptr));
+	srand(static_cast<int>(time(nullptr)));
 
 	for (int HeightIndex = 0; HeightIndex < Space.GetHeight(); HeightIndex++) {
 		for (int WidthIndex = 0; WidthIndex < Space.GetWidth(); WidthIndex++) {
